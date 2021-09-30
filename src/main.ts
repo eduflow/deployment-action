@@ -32,7 +32,8 @@ async function run() {
     const auto_merge: boolean = autoMergeStringInput === 'true'
 
     const client = github.getOctokit(token, {
-      previews: ['flash', 'ant-man']
+      previews: ['flash', 'ant-man'],
+      log: console
     })
 
     const deployment = await client.rest.repos.createDeployment({
