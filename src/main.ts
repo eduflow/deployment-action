@@ -31,31 +31,36 @@ async function run() {
 
     const auto_merge: boolean = autoMergeStringInput === 'true'
 
-    const client = new github.GitHub(token, {previews: ['flash', 'ant-man']})
+    const client = github.getOctokit(token, {
+      previews: ['flash', 'ant-man']
+    })
 
-    const deployment = await client.repos.createDeployment({
+    const deployment = await client.rest.repos.createDeployment({
       owner: context.repo.owner,
       repo: context.repo.repo,
-      ref: ref,
+      ref,
       required_contexts: [],
       environment,
       transient_environment: true,
       auto_merge,
       description
     })
+    if (deployment.status === 201) {
+      await client.rest.repos.createDeploymentStatus({
+        ...context.repo,
+        deployment_id: deployment.data.id,
+        state: initialStatus,
+        log_url: logUrl,
+        environment_url: url
+      })
 
-    await client.repos.createDeploymentStatus({
-      ...context.repo,
-      deployment_id: deployment.data.id,
-      state: initialStatus,
-      log_url: logUrl,
-      environment_url: url
-    })
-
-    core.setOutput('deployment_id', deployment.data.id.toString())
+      core.setOutput('deployment_id', deployment.data.id.toString())
+    }
   } catch (error) {
-    core.error(error)
-    core.setFailed(error.message)
+    if (error instanceof Error) {
+      core.error(error)
+      core.setFailed(error.message)
+    }
   }
 }
 
