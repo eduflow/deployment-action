@@ -55,7 +55,8 @@ function run() {
             });
             const auto_merge = autoMergeStringInput === 'true';
             const client = github.getOctokit(token, {
-                previews: ['flash', 'ant-man']
+                previews: ['flash', 'ant-man'],
+                log: console
             });
             const deployment = yield client.rest.repos.createDeployment({
                 owner: context.repo.owner,
@@ -68,9 +69,7 @@ function run() {
                 description
             });
             if (deployment.status === 201) {
-                yield client.rest.repos.createDeploymentStatus(Object.assign(Object.assign({}, context.repo), { deployment_id: deployment.data.id, 
-                    // deployment_id: deployment.data.id,
-                    state: initialStatus, log_url: logUrl, environment_url: url }));
+                yield client.rest.repos.createDeploymentStatus(Object.assign(Object.assign({}, context.repo), { deployment_id: deployment.data.id, state: initialStatus, log_url: logUrl, environment_url: url }));
                 core.setOutput('deployment_id', deployment.data.id.toString());
             }
         }
