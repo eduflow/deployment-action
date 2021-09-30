@@ -46,6 +46,7 @@ async function run() {
       auto_merge,
       description
     })
+    console.log({deployment})
     if (deployment.status === 201) {
       await client.rest.repos.createDeploymentStatus({
         ...context.repo,

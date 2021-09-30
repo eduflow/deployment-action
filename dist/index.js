@@ -68,6 +68,7 @@ function run() {
                 auto_merge,
                 description
             });
+            console.log({ deployment });
             if (deployment.status === 201) {
                 yield client.rest.repos.createDeploymentStatus(Object.assign(Object.assign({}, context.repo), { deployment_id: deployment.data.id, state: initialStatus, log_url: logUrl, environment_url: url }));
                 core.setOutput('deployment_id', deployment.data.id.toString());
