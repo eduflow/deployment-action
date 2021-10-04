@@ -46,6 +46,7 @@ function run() {
             const ref = core.getInput('ref', { required: false }) || context.ref;
             const url = core.getInput('target_url', { required: false }) || logUrl;
             const environment = core.getInput('environment', { required: false }) || 'production';
+            const transient_environment = core.getBooleanInput('transient_environment', { required: false }) || false;
             const description = core.getInput('description', { required: false });
             const initialStatus = core.getInput('initial_status', {
                 required: false
@@ -64,7 +65,7 @@ function run() {
                 ref,
                 required_contexts: [],
                 environment,
-                transient_environment: true,
+                transient_environment,
                 auto_merge,
                 description
             });
